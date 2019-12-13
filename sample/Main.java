@@ -295,13 +295,10 @@ public class Main extends Application {
             primaryStage.close();
         });
 
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Homework #4");
         primaryStage.setScene(new Scene(mainBorderPane, 1200, 800));
         primaryStage.show();
     }
-/**click create shape button, new scene form thing pops up with choice box of which shape to make,
- * that makes the text fields applicable light up
- * create the shape and add it to the groupSHapes it should then just display*/
 
     public static void main(String[] args) {
         launch(args);
