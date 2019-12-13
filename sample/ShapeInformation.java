@@ -9,6 +9,7 @@ public class ShapeInformation {
     Shape3D shape;
     double startingXCoordinate, startingYCoordinate;
     int creationID;
+    boolean isSelected = false;
 
     public ShapeInformation(Shape3D s, double x, double y, int c){
         shape = s;
@@ -22,8 +23,8 @@ public class ShapeInformation {
         //this here shows we can do the clicked even inside here... just have to figure out how to get the information that its been clicked outside
         //IF ALL ELSE FAILS
         //We can move the creation of this object class to the main.java and simply use a global variable for which creationID is selected
-        s.setOnMouseClicked(event -> {
-            System.out.println(creationID + " Has been clicked");
+        shape.setOnMouseClicked(event -> {
+            isSelected = true;
         });
 
     }
@@ -40,4 +41,17 @@ public class ShapeInformation {
         return creationID;
     }
 
+
+
+    //This was some stuff I was trying with booleans but it still wont function if I can't index into the vector within the lambda
+
+    public void select(){
+        isSelected = true;
+    }
+    public boolean isSelected(){
+        return isSelected;
+    }
+    public void resetSelected(){
+        isSelected = false;
+    }
 }

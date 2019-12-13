@@ -3,11 +3,13 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -22,8 +24,10 @@ import javafx.stage.Stage;
 
 import java.util.Vector;
 
+
+
 public class Main extends Application {
-//    int selected;
+    int selectedShape;
 
     int shapesCreated = 0;
 
@@ -265,6 +269,7 @@ public class Main extends Application {
             stageCreateShape.close();
         });
 
+
         // End of create shape scene stuff
         //
         //
@@ -273,6 +278,20 @@ public class Main extends Application {
         buttonCreateShape.setOnAction(event -> {
             stageCreateShape.show();
         });
+
+
+        // creates actions for each shape when clicked it runs this loop to look for the one in the vector that was clicked
+        for(int j = 0; j < shapesCreated; j++) {
+            vectorOf3DShapes.get(j).getShape().setOnMouseClicked(event -> {
+                // this inner for loop is necessary as the lambda wont let us use the information from the outer for loop
+                for (int i = 0; i < shapesCreated; i++) {
+                    if (vectorOf3DShapes.get(i).isSelected()) {
+                        selectedShape = i;
+                        vectorOf3DShapes.get(i).resetSelected();
+                    }
+                }
+            });
+        }
 
         //Event handler for user selecting a new subscene color
         choiceBoxSubSceneColors.setOnAction(event -> {
