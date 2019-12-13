@@ -1,0 +1,6 @@
+The adding shapes works, its just a little dodgy around the sizes and translations
+To see what I mean and get a feel for where we are operating use:
+
+Box
+0,0 for the translation
+9,9,9 for the sides

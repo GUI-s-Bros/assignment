@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Shape3D;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
@@ -24,6 +25,7 @@ import java.util.Vector;
 public class Main extends Application {
 //    int selected;
 
+    int shapesCreated = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -111,32 +113,178 @@ public class Main extends Application {
         mainBorderPane.setRight(vboxRightSide);
 
         // SubScene stuff
-        Vector<Shape3D> vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable size that increases as needed
+        Vector<ShapeInformation> vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable size that increases as needed
                                                            // will contain all the pointers to the shapes we make
         Group groupShapes = new Group();
 
         SubScene subScene = new SubScene(groupShapes, 900, 700);
-        subScene.setFill(Color.GRAY);
+        subScene.setFill(Color.AZURE);
         //set the camera angle
         PerspectiveCamera perspectiveCamera = new PerspectiveCamera(true);
         subScene.setCamera(perspectiveCamera);
         Rotate rotatePerspectiveCameraX = new Rotate(40, Rotate.X_AXIS);
         Rotate rotatePerspectiveCameraY = new Rotate(40, Rotate.Y_AXIS);
-        perspectiveCamera.getTransforms().addAll(rotatePerspectiveCameraX, rotatePerspectiveCameraY);
+        perspectiveCamera.getTransforms().addAll(rotatePerspectiveCameraX, rotatePerspectiveCameraY, new Translate(0,0,-80));
         mainBorderPane.setCenter(subScene);
 
+        // This starts the create shape scene stuff
+        //
+        //
+        //
+
+        // A borderpane to hold all forms and in the darkness bind them
+        BorderPane borderPaneCreateShape = new BorderPane();
+
+        //Radio buttons to choose which shape to make
+        RadioButton radioButtonSphere = new RadioButton("Sphere");
+        RadioButton radioButtonBox = new RadioButton("Box");
+        RadioButton radioButtonCylinder = new RadioButton("Cylinder");
+        ToggleGroup toggleGroupShapeToMake = new ToggleGroup();
+        radioButtonBox.setToggleGroup(toggleGroupShapeToMake);
+        radioButtonCylinder.setToggleGroup(toggleGroupShapeToMake);
+        radioButtonSphere.setToggleGroup(toggleGroupShapeToMake);
+
+        //Submit button for submitting
+        Button buttonSubmit = new Button("Submit");
+
+        //VBox for radio buttons and submit
+        VBox vboxRadioButtonsCreateShape = new VBox(10, radioButtonBox, radioButtonCylinder, radioButtonSphere, buttonSubmit);
+        vboxRadioButtonsCreateShape.setAlignment(Pos.CENTER_LEFT);
+
+        //Labels and text fields to fill out, will be disabled unless applicable
+        Label labelCreateShapeXCoordinate = new Label("X Coordinate");
+        TextField textFieldCreateShapeXCoordinate = new TextField();
+        Label labelCreateShapeYCoordinate = new Label("Y Coordinate");
+        TextField textFieldCreateShapeYCoordinate = new TextField();
+        Label labelCreateShapeRadius = new Label("Radius");
+        TextField textFieldCreateShapeRadius = new TextField();
+        Label labelCreateShapeWidth = new Label("Width");
+        TextField textFieldCreateShapeWidth = new TextField();
+        Label labelCreateShapeHeight = new Label("Height");
+        TextField textFieldCreateShapeHeight = new TextField();
+        Label labelCreateShapeLength = new Label("Length");
+        TextField textFieldCreateShapeLength = new TextField();
+
+        //VBox for all those labels and Text fields
+        VBox vboxTextFieldsCreateShape = new VBox(10, labelCreateShapeXCoordinate, textFieldCreateShapeXCoordinate, labelCreateShapeYCoordinate, textFieldCreateShapeYCoordinate,
+                labelCreateShapeRadius, textFieldCreateShapeRadius, labelCreateShapeHeight, textFieldCreateShapeHeight, labelCreateShapeWidth, textFieldCreateShapeWidth,
+                labelCreateShapeLength, textFieldCreateShapeLength);
+        vboxTextFieldsCreateShape.setAlignment(Pos.CENTER);
+
+        textFieldCreateShapeXCoordinate.setDisable(true);
+        textFieldCreateShapeYCoordinate.setDisable(true);
+        textFieldCreateShapeHeight.setDisable(true);
+        textFieldCreateShapeLength.setDisable(true);
+        textFieldCreateShapeRadius.setDisable(true);
+        textFieldCreateShapeWidth.setDisable(true);
+
+        //finishing up the UI
+        borderPaneCreateShape.setCenter(vboxRadioButtonsCreateShape);
+        borderPaneCreateShape.setRight(vboxTextFieldsCreateShape);
+        borderPaneCreateShape.setPadding(new Insets(10));
 
 
+        Scene sceneCreateShape = new Scene(borderPaneCreateShape, 300, 400);
+        Stage stageCreateShape = new Stage();
+        stageCreateShape.setTitle("Create Shape");
+        stageCreateShape.setScene(sceneCreateShape);
+        // show happens in the Create Shape Button
+
+
+        radioButtonBox.setOnAction(event -> {
+            textFieldCreateShapeXCoordinate.setDisable(false);
+            textFieldCreateShapeYCoordinate.setDisable(false);
+            textFieldCreateShapeHeight.setDisable(false);
+            textFieldCreateShapeLength.setDisable(false);
+            textFieldCreateShapeRadius.setDisable(true);
+            textFieldCreateShapeWidth.setDisable(false);
+        });
+
+        radioButtonCylinder.setOnAction(event -> {
+            textFieldCreateShapeXCoordinate.setDisable(false);
+            textFieldCreateShapeYCoordinate.setDisable(false);
+            textFieldCreateShapeHeight.setDisable(false);
+            textFieldCreateShapeLength.setDisable(true);
+            textFieldCreateShapeRadius.setDisable(false);
+            textFieldCreateShapeWidth.setDisable(true);
+        });
+
+        radioButtonSphere.setOnAction(event -> {
+            textFieldCreateShapeXCoordinate.setDisable(false);
+            textFieldCreateShapeYCoordinate.setDisable(false);
+            textFieldCreateShapeHeight.setDisable(true);
+            textFieldCreateShapeLength.setDisable(true);
+            textFieldCreateShapeRadius.setDisable(false);
+            textFieldCreateShapeWidth.setDisable(true);
+        });
+
+
+        buttonSubmit.setOnAction(event -> {
+
+            if(radioButtonBox.isSelected()){
+                double width = new Double(textFieldCreateShapeWidth.getText()).doubleValue();
+                double height = new Double(textFieldCreateShapeHeight.getText()).doubleValue();
+                double length = new Double(textFieldCreateShapeLength.getText()).doubleValue();
+                double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
+                double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
+
+                vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, length), x, y, shapesCreated));
+                groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                shapesCreated++;
+            }
+            if(radioButtonCylinder.isSelected()){
+                double height = new Double(textFieldCreateShapeHeight.getText()).doubleValue();
+                double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
+                double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
+                double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
+
+                vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), x, y, shapesCreated));
+                groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                shapesCreated++;
+            }
+            if(radioButtonSphere.isSelected()){
+                double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
+                double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
+                double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
+
+                vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), x, y, shapesCreated));
+                groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                shapesCreated++;
+            }
+            //cleanses the scene for new inputs before closing
+            textFieldCreateShapeHeight.setText("");
+            textFieldCreateShapeWidth.setText("");
+            textFieldCreateShapeLength.setText("");
+            textFieldCreateShapeRadius.setText("");
+            textFieldCreateShapeXCoordinate.setText("");
+            textFieldCreateShapeYCoordinate.setText("");
+            radioButtonBox.setSelected(false);
+            radioButtonCylinder.setSelected(false);
+            radioButtonSphere.setSelected(false);
+
+            stageCreateShape.close();
+        });
+
+        // End of create shape scene stuff
+
+
+
+        buttonCreateShape.setOnAction(event -> {
+            stageCreateShape.show();
+        });
 
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(mainBorderPane, 1200, 800));
         primaryStage.show();
     }
-
+/**click create shape button, new scene form thing pops up with choice box of which shape to make,
+ * that makes the text fields applicable light up
+ * create the shape and add it to the groupSHapes it should then just display*/
 
     public static void main(String[] args) {
         launch(args);
     }
+
 }
 // My own example code for how to select the shapes and modify them with the sliders
 
