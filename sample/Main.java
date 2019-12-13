@@ -1,6 +1,6 @@
 //Names here
 //Jonathan Dunsmore
-package sample;
+package assignment.sample;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -28,11 +28,12 @@ import java.util.Vector;
 
 public class Main extends Application {
     int selectedShape;
-
+    Object isEditing;
     int shapesCreated = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
         BorderPane mainBorderPane = new BorderPane();
         mainBorderPane.setPadding(new Insets(5));
 
@@ -59,7 +60,6 @@ public class Main extends Application {
         mainBorderPane.setBottom(hboxBottom);
 
         // side menu
-
         Label labelRotateXCoordinate = new Label("Rotate X-Coordinate");
         Slider sliderRotateX = new Slider(0, 360, 0);
         sliderRotateX.setShowTickMarks(true);
@@ -234,9 +234,8 @@ public class Main extends Application {
 
                 vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, length), x, y, shapesCreated));
                 groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
-                shapesCreated++;
             }
-            if(radioButtonCylinder.isSelected()){
+            else if(radioButtonCylinder.isSelected()){
                 double height = new Double(textFieldCreateShapeHeight.getText()).doubleValue();
                 double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
                 double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
@@ -244,17 +243,33 @@ public class Main extends Application {
 
                 vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), x, y, shapesCreated));
                 groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
-                shapesCreated++;
             }
-            if(radioButtonSphere.isSelected()){
+            else if(radioButtonSphere.isSelected()){
                 double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
                 double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
                 double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
                 vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), x, y, shapesCreated));
                 groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
-                shapesCreated++;
             }
+
+            vectorOf3DShapes.get(shapesCreated).getShape().setOnMouseClicked(event1 ->{
+                isEditing = event1.getTarget();
+
+            } );
+            shapesCreated++;
+
+            //ADDING FUNCTIONALITY
+            sliderRotateX.valueProperty().addListener((s,o,n)->{
+                ((Shape3D)isEditing).getTransforms().addAll(new Rotate(sliderRotateX.getValue(), Rotate.X_AXIS));
+            });
+
+            sliderRotateY.valueProperty().addListener((s,o,n)->{
+                ((Shape3D)isEditing).getTransforms().addAll(new Rotate(sliderRotateX.getValue(), Rotate.Y_AXIS));
+            });
+
+            
+
             //cleanses the scene for new inputs before closing
             textFieldCreateShapeHeight.setText("");
             textFieldCreateShapeWidth.setText("");
@@ -281,17 +296,6 @@ public class Main extends Application {
 
 
         // creates actions for each shape when clicked it runs this loop to look for the one in the vector that was clicked
-        for(int j = 0; j < shapesCreated; j++) {
-            vectorOf3DShapes.get(j).getShape().setOnMouseClicked(event -> {
-                // this inner for loop is necessary as the lambda wont let us use the information from the outer for loop
-                for (int i = 0; i < shapesCreated; i++) {
-                    if (vectorOf3DShapes.get(i).isSelected()) {
-                        selectedShape = i;
-                        vectorOf3DShapes.get(i).resetSelected();
-                    }
-                }
-            });
-        }
 
         //Event handler for user selecting a new subscene color
         choiceBoxSubSceneColors.setOnAction(event -> {
