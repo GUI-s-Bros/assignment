@@ -1,5 +1,5 @@
 //Jonathan Dunsmore
-package sample;
+package assignment.sample;
 
 import javafx.scene.shape.Shape3D;
 import javafx.stage.Stage;
@@ -8,10 +8,10 @@ import javafx.stage.Stage;
 public class ShapeInformation {
     Shape3D shape;
     double startingXCoordinate, startingYCoordinate;
-    int creationID;
+    char creationID;
     boolean isSelected = false;
 
-    public ShapeInformation(Shape3D s, double x, double y, int c){
+    public ShapeInformation(Shape3D s, double x, double y, char c){
         shape = s;
         startingXCoordinate = x;
         startingYCoordinate = y;
@@ -37,7 +37,7 @@ public class ShapeInformation {
     public double getStartingYCoordinate(){
         return startingYCoordinate;
     }
-    public int getCreationID(){ // this was intended to be what we tied to the object for when we select it with the mouse
+    public char getCreationID(){ // this was intended to be what we tied to the object for when we select it with the mouse
         return creationID;
     }
 

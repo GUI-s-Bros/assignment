@@ -19,6 +19,7 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
@@ -232,7 +233,7 @@ public class Main extends Application {
                 double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
                 double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
-                vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, length), x, y, shapesCreated));
+                vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, length), x, y, 'B'));
                 groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
             }
             else if(radioButtonCylinder.isSelected()){
@@ -241,7 +242,7 @@ public class Main extends Application {
                 double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
                 double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
-                vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), x, y, shapesCreated));
+                vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), x, y, 'c'));
                 groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
             }
             else if(radioButtonSphere.isSelected()){
@@ -249,12 +250,13 @@ public class Main extends Application {
                 double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
                 double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
-                vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), x, y, shapesCreated));
+                vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), x, y, 'r'));
                 groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
             }
 
             vectorOf3DShapes.get(shapesCreated).getShape().setOnMouseClicked(event1 ->{
                 isEditing = event1.getTarget();
+                System.out.println(((Shape3D)isEditing).getClass().getName());
 
             } );
             shapesCreated++;
@@ -268,7 +270,28 @@ public class Main extends Application {
                 ((Shape3D)isEditing).getTransforms().addAll(new Rotate(sliderRotateX.getValue(), Rotate.Y_AXIS));
             });
 
-            
+            buttonTranslateToXCoordinate.setOnAction(event2 ->{
+                ((Shape3D)isEditing).setTranslateX(Double.parseDouble(textFieldTranslateToXCoordinate.getText()));
+
+            });
+
+            buttonTranslateToYCoordinate.setOnAction(event3->{
+                ((Shape3D)isEditing).setTranslateY(Double.parseDouble(textFieldTranslateToYCoordinate.getText()));
+
+            });
+
+
+            //FUNCTIONALITY FOR SCALING
+            scaleXCoordinate.valueProperty().addListener((s,o,n)->{
+                ((Shape3D)isEditing).setScaleX(scaleXCoordinate.getValue());
+
+            });
+
+            scaleYCoordinate.valueProperty().addListener((s,o,n)->{
+                ((Shape3D)isEditing).setScaleX(scaleYCoordinate.getValue());
+
+            });
+
 
             //cleanses the scene for new inputs before closing
             textFieldCreateShapeHeight.setText("");
