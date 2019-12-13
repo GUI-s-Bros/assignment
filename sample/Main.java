@@ -266,11 +266,32 @@ public class Main extends Application {
         });
 
         // End of create shape scene stuff
-
-
+        //
+        //
 
         buttonCreateShape.setOnAction(event -> {
             stageCreateShape.show();
+        });
+
+        //Event handler for user selecting a new subscene color
+        choiceBoxSubSceneColors.setOnAction(event -> {
+            if (choiceBoxSubSceneColors.getSelectionModel().getSelectedItem().equals("White")) {
+                subScene.setFill(Color.WHITE);
+            }else if (choiceBoxSubSceneColors.getSelectionModel().getSelectedItem().equals("Grey")) {
+                subScene.setFill(Color.GRAY);
+            }else if (choiceBoxSubSceneColors.getSelectionModel().getSelectedItem().equals("Black")) {
+                subScene.setFill(Color.BLACK);
+            }else if (choiceBoxSubSceneColors.getSelectionModel().getSelectedItem().equals("Red")) {
+                subScene.setFill(Color.RED);
+            }else if (choiceBoxSubSceneColors.getSelectionModel().getSelectedItem().equals("Azure")) {
+                subScene.setFill(Color.AZURE);
+            }else if (choiceBoxSubSceneColors.getSelectionModel().getSelectedItem().equals("Teal")) {
+                subScene.setFill(Color.TEAL);
+            }
+        });
+
+        menuItemExit.setOnAction(event -> {
+            primaryStage.close();
         });
 
         primaryStage.setTitle("Hello World");
