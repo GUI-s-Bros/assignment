@@ -269,6 +269,7 @@ public class Main extends Application {
         //
         //
 
+        //The Create shape button that brings up the form to make a shape
         buttonCreateShape.setOnAction(event -> {
             stageCreateShape.show();
         });
