@@ -12,11 +12,13 @@ public class ShapeInformation {
     boolean isSelected = false;
     double currentXCoordinate;
 
+
     public ShapeInformation(Shape3D s, double x, double y, char c){
         shape = s;
         startingXCoordinate = x;
         startingYCoordinate = y;
         creationID = c;
+
 
         currentXCoordinate = x;
         s.setTranslateX(x);
