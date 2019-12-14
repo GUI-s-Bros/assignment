@@ -10,6 +10,7 @@ public class ShapeInformation {
     double startingXCoordinate, startingYCoordinate;
     char creationID;
     boolean isSelected = false;
+    double currentXCoordinate;
 
     public ShapeInformation(Shape3D s, double x, double y, char c){
         shape = s;
@@ -17,6 +18,7 @@ public class ShapeInformation {
         startingYCoordinate = y;
         creationID = c;
 
+        currentXCoordinate = x;
         s.setTranslateX(x);
         s.setTranslateY(y);
 
@@ -54,4 +56,5 @@ public class ShapeInformation {
     public void resetSelected(){
         isSelected = false;
     }
+
 }

@@ -22,8 +22,11 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.*;
+import java.util.Scanner;
 import java.util.Vector;
 
 
@@ -32,6 +35,8 @@ public class Main extends Application {
     int selectedShape;
     Object isEditing;
     int shapesCreated = 0;
+    Vector<ShapeInformation> vectorOf3DShapes;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -48,6 +53,51 @@ public class Main extends Application {
         MenuItem menuItemSave = new MenuItem("Save");
         MenuItem menuItemOpen = new MenuItem("Open");
         MenuItem menuItemExit = new MenuItem("Exit");
+
+        menuItemSave.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            //fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Shape Files", "*.shape"));
+            for(int i = 0; i < vectorOf3DShapes.size(); i++){
+                vectorOf3DShapes.get(i).getStartingXCoordinate();
+                vectorOf3DShapes.get(i).getStartingYCoordinate();
+                vectorOf3DShapes.get(i).getShape().getTranslateX();
+                vectorOf3DShapes.get(i).getShape().getTranslateY();
+                if(vectorOf3DShapes.get(i).getCreationID() == 'B')
+                {
+                    ((Box)vectorOf3DShapes.get(i).getShape()).getHeight();
+                    ((Box)vectorOf3DShapes.get(i).getShape()).getDepth();
+                    ((Box)vectorOf3DShapes.get(i).getShape()).getWidth();
+                }
+            }
+            File newFile = fileChooser.showSaveDialog(primaryStage);
+
+            try
+            {
+                // create a new file in the location specified by curFilePath
+                FileWriter fw = new FileWriter(newFile);
+                PrintWriter pw = new PrintWriter(newFile);
+                //for
+
+
+
+
+
+
+                pw.println("yeeeeeet");
+                pw.close();
+            }
+            catch (IOException e)
+            {
+                // Display an alert informing the user the file could not be created
+                Alert alert = new Alert(Alert.AlertType. ERROR);
+                alert.setHeaderText( "Error Creating File!");
+                alert.show();
+            }
+
+        });
+
+
+
 
         menuFile.getItems().addAll(menuItemSave, new SeparatorMenuItem(), menuItemOpen, new SeparatorMenuItem(), menuItemExit);
 
@@ -129,7 +179,7 @@ public class Main extends Application {
         mainBorderPane.setRight(vboxRightSide);
 
         // SubScene stuff
-        Vector<ShapeInformation> vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable
+        vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable
         // size that increases as needed
         // will contain all the pointers to the shapes we make
         Group groupShapes = new Group();
@@ -272,6 +322,8 @@ public class Main extends Application {
             vectorOf3DShapes.get(shapesCreated).getShape().setOnMouseClicked(event1 ->{
                 isEditing = event1.getTarget();
                 System.out.println(((Shape3D)isEditing).getClass().getName());
+                double x = ((Shape3D)isEditing).getTransforms().get(0).getTx();
+                System.out.println(x);
 
             } );
             shapesCreated++;
@@ -291,6 +343,10 @@ public class Main extends Application {
 
             buttonTranslateToXCoordinate.setOnAction(event2 ->{
                 ((Shape3D)isEditing).setTranslateX(Double.parseDouble(textFieldTranslateToXCoordinate.getText()));
+                double x = ((Shape3D)isEditing).getTranslateX();
+
+                System.out.print(x);
+
 
             });
 
@@ -391,60 +447,3 @@ public class Main extends Application {
     }
 
 }
-// My own example code for how to select the shapes and modify them with the sliders
-
-//
-//        VBox root = new VBox();
-//        root.setAlignment(Pos.CENTER);
-//
-//        Slider slider1 = new Slider(0, 360, 0);
-//        slider1.setShowTickMarks(true);
-//        slider1.setShowTickLabels(true);
-//        slider1.setMaxWidth(200);
-//        Slider slider2 = new Slider(0, 360, 0);
-//        slider2.setShowTickMarks(true);
-//        slider2.setShowTickLabels(true);
-//        slider2.setMaxWidth(200);
-//
-//
-//        Cylinder c = new Cylinder(5, 10);
-//        c.getTransforms().add(new Translate(20, 0, 0));
-//        Box b = new Box(10, 5, 7);
-//
-//        Shape3D[] shapeArray = new Shape3D[2];
-//        shapeArray[0] = c;
-//        shapeArray[1] = b;
-//
-//        Group shapeGroup = new Group();
-//
-//        shapeGroup.getChildren().addAll(shapeArray[0], shapeArray[1]);
-//
-//        SubScene subScene = new SubScene(shapeGroup, 350, 350, true, SceneAntialiasing.DISABLED);
-//        subScene.setFill(Color.TEAL);
-//
-//        PerspectiveCamera pCamera = new PerspectiveCamera(true);
-//        subScene.setCamera(pCamera);
-//        Rotate rotateX = new Rotate(40, Rotate.X_AXIS);
-//        Rotate rotateY = new Rotate(40, Rotate.Y_AXIS);
-//        pCamera.getTransforms().addAll(rotateX, rotateY, new Translate(5,0,-60));
-//
-//        root.getChildren().addAll(subScene, slider1, slider2);
-//
-//        shapeArray[0].setOnMouseClicked(event -> {
-//            selected = 0;
-//        });
-//        shapeArray[1].setOnMouseClicked(event -> {
-//            selected = 1;
-//        });
-//
-//
-//        slider1.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            //when you set a number it will be equal to slider1.getValue();
-//            Rotate tX = new Rotate(slider1.getValue(), Rotate.X_AXIS);
-//            shapeArray[selected].getTransforms().add(tX);
-//        });
-//
-//        slider2.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            Rotate tY = new Rotate(slider2.getValue(), Rotate.Y_AXIS);
-//            shapeArray[selected].getTransforms().addAll(tY);
-//        });
