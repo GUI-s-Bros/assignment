@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Shape3D;
@@ -71,6 +72,11 @@ public class Main extends Application {
         sliderRotateY.setShowTickMarks(true);
         sliderRotateY.setShowTickLabels(true);
 
+        Label labelRotateZCoordiante = new Label("Rotate Z-Coordinate");
+        Slider sliderRotateZ = new Slider(0,360,0);
+        sliderRotateZ.setShowTickMarks(true);
+        sliderRotateZ.setShowTickLabels(true);
+
         Label labelTranslateToXCoordinate = new Label("Translate to X-Coordinate");
         TextField textFieldTranslateToXCoordinate = new TextField();
         Button buttonTranslateToXCoordinate = new Button("Apply");
@@ -79,20 +85,24 @@ public class Main extends Application {
         TextField textFieldTranslateToYCoordinate = new TextField();
         Button buttonTranslateToYCoordinate = new Button("Apply");
 
+        Label labelTranslateToZCoordinate = new Label("Translate to Z-Coordinate");
+        TextField textFieldTranslateToZCoordinate = new TextField();
+        Button buttonTranslateToZCoordinate = new Button("Apply");
+
         Label labelScaleXCoordinate = new Label("Scale X-Coordinate");
-        Slider scaleXCoordinate = new Slider(0, 100, 0);
-        sliderRotateX.setShowTickMarks(true);
-        sliderRotateX.setShowTickLabels(true);
+        Slider scaleXCoordinate = new Slider(0.5, 3, 1);
+        scaleXCoordinate.setShowTickMarks(true);
+        scaleXCoordinate.setShowTickLabels(true);
 
         Label labelScaleYCoordinate = new Label("Scale Y-Coordinate");
-        Slider scaleYCoordinate = new Slider(0, 100, 0);
-        sliderRotateX.setShowTickMarks(true);
-        sliderRotateX.setShowTickLabels(true);
+        Slider scaleYCoordinate = new Slider(0.5, 3, 1);
+        scaleYCoordinate.setShowTickMarks(true);
+        scaleYCoordinate.setShowTickLabels(true);
 
         Label labelScaleZCoordinate = new Label("Scale Z-Coordinate");
-        Slider scaleZCoordinate = new Slider(0, 100, 0);
-        sliderRotateX.setShowTickMarks(true);
-        sliderRotateX.setShowTickLabels(true);
+        Slider scaleZCoordinate = new Slider(0.5, 3, 1);
+        scaleZCoordinate.setShowTickMarks(true);
+        scaleZCoordinate.setShowTickLabels(true);
 
         Label labelShapeColors = new Label("Shape Colors");
         ChoiceBox<String> choiceBoxShapeColors = new ChoiceBox<>();
@@ -105,9 +115,10 @@ public class Main extends Application {
 
         // put all the side bar items into the vbox
         VBox vboxRightSide = new VBox(5, labelRotateXCoordinate, sliderRotateX,
-                labelRotateYCoordinate, sliderRotateY,
+                labelRotateYCoordinate, sliderRotateY, labelRotateZCoordiante, sliderRotateZ,
                 labelTranslateToXCoordinate, textFieldTranslateToXCoordinate, buttonTranslateToXCoordinate,
                 labelTranslateToYCoordinate, textFieldTranslateToYCoordinate, buttonTranslateToYCoordinate,
+                labelTranslateToZCoordinate, textFieldTranslateToZCoordinate, buttonTranslateToZCoordinate,
                 labelScaleXCoordinate, scaleXCoordinate,
                 labelScaleYCoordinate, scaleYCoordinate,
                 labelScaleZCoordinate, scaleZCoordinate,
@@ -118,8 +129,9 @@ public class Main extends Application {
         mainBorderPane.setRight(vboxRightSide);
 
         // SubScene stuff
-        Vector<ShapeInformation> vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable size that increases as needed
-                                                           // will contain all the pointers to the shapes we make
+        Vector<ShapeInformation> vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable
+        // size that increases as needed
+        // will contain all the pointers to the shapes we make
         Group groupShapes = new Group();
 
         SubScene subScene = new SubScene(groupShapes, 900, 700);
@@ -129,7 +141,7 @@ public class Main extends Application {
         subScene.setCamera(perspectiveCamera);
         Rotate rotatePerspectiveCameraX = new Rotate(40, Rotate.X_AXIS);
         Rotate rotatePerspectiveCameraY = new Rotate(40, Rotate.Y_AXIS);
-        perspectiveCamera.getTransforms().addAll(rotatePerspectiveCameraX, rotatePerspectiveCameraY, new Translate(0,0,-80));
+        perspectiveCamera.getTransforms().addAll(new Translate(0,0,-80));
         mainBorderPane.setCenter(subScene);
 
         // This starts the create shape scene stuff
@@ -153,7 +165,8 @@ public class Main extends Application {
         Button buttonSubmit = new Button("Submit");
 
         //VBox for radio buttons and submit
-        VBox vboxRadioButtonsCreateShape = new VBox(10, radioButtonBox, radioButtonCylinder, radioButtonSphere, buttonSubmit);
+        VBox vboxRadioButtonsCreateShape = new VBox(10, radioButtonBox, radioButtonCylinder,
+                radioButtonSphere, buttonSubmit);
         vboxRadioButtonsCreateShape.setAlignment(Pos.CENTER_LEFT);
 
         //Labels and text fields to fill out, will be disabled unless applicable
@@ -171,8 +184,10 @@ public class Main extends Application {
         TextField textFieldCreateShapeLength = new TextField();
 
         //VBox for all those labels and Text fields
-        VBox vboxTextFieldsCreateShape = new VBox(10, labelCreateShapeXCoordinate, textFieldCreateShapeXCoordinate, labelCreateShapeYCoordinate, textFieldCreateShapeYCoordinate,
-                labelCreateShapeRadius, textFieldCreateShapeRadius, labelCreateShapeHeight, textFieldCreateShapeHeight, labelCreateShapeWidth, textFieldCreateShapeWidth,
+        VBox vboxTextFieldsCreateShape = new VBox(10, labelCreateShapeXCoordinate,
+                textFieldCreateShapeXCoordinate, labelCreateShapeYCoordinate, textFieldCreateShapeYCoordinate,
+                labelCreateShapeRadius, textFieldCreateShapeRadius, labelCreateShapeHeight,
+                textFieldCreateShapeHeight, labelCreateShapeWidth, textFieldCreateShapeWidth,
                 labelCreateShapeLength, textFieldCreateShapeLength);
         vboxTextFieldsCreateShape.setAlignment(Pos.CENTER);
 
@@ -267,7 +282,11 @@ public class Main extends Application {
             });
 
             sliderRotateY.valueProperty().addListener((s,o,n)->{
-                ((Shape3D)isEditing).getTransforms().addAll(new Rotate(sliderRotateX.getValue(), Rotate.Y_AXIS));
+                ((Shape3D)isEditing).getTransforms().addAll(new Rotate(sliderRotateY.getValue(), Rotate.Y_AXIS));
+            });
+
+            sliderRotateZ.valueProperty().addListener((s,o,n)->{
+                ((Shape3D)isEditing).getTransforms().addAll(new Rotate(sliderRotateZ.getValue(), Rotate.Z_AXIS));
             });
 
             buttonTranslateToXCoordinate.setOnAction(event2 ->{
@@ -280,6 +299,10 @@ public class Main extends Application {
 
             });
 
+            buttonTranslateToZCoordinate.setOnAction(event4->{
+                ((Shape3D)isEditing).setTranslateZ(Double.parseDouble(textFieldTranslateToZCoordinate.getText()));
+            });
+
 
             //FUNCTIONALITY FOR SCALING
             scaleXCoordinate.valueProperty().addListener((s,o,n)->{
@@ -288,7 +311,23 @@ public class Main extends Application {
             });
 
             scaleYCoordinate.valueProperty().addListener((s,o,n)->{
-                ((Shape3D)isEditing).setScaleX(scaleYCoordinate.getValue());
+                ((Shape3D)isEditing).setScaleY(scaleYCoordinate.getValue());
+
+            });
+
+            scaleZCoordinate.valueProperty().addListener((s,o,n)->{
+                ((Shape3D)isEditing).setScaleZ(scaleZCoordinate.getValue());
+            });
+
+            choiceBoxShapeColors.setOnAction(event3 -> {
+                if(choiceBoxShapeColors.getValue().equals("White"))
+                    ((Shape3D)isEditing).setMaterial(new PhongMaterial(Color.WHITE));
+                if(choiceBoxShapeColors.getValue().equals("Grey"))
+                    ((Shape3D)isEditing).setMaterial(new PhongMaterial(Color.GREY));
+                if(choiceBoxShapeColors.getValue().equals("Black"))
+                    ((Shape3D)isEditing).setMaterial(new PhongMaterial(Color.GREY));
+                if(choiceBoxShapeColors.getValue().equals("Red"))
+                    ((Shape3D)isEditing).setMaterial(new PhongMaterial(Color.RED));
 
             });
 
@@ -318,7 +357,8 @@ public class Main extends Application {
         });
 
 
-        // creates actions for each shape when clicked it runs this loop to look for the one in the vector that was clicked
+        // creates actions for each shape when clicked it runs this loop to look for the one in
+        // the vector that was clicked
 
         //Event handler for user selecting a new subscene color
         choiceBoxSubSceneColors.setOnAction(event -> {
@@ -342,7 +382,7 @@ public class Main extends Application {
         });
 
         primaryStage.setTitle("Homework #4");
-        primaryStage.setScene(new Scene(mainBorderPane, 1200, 800));
+        primaryStage.setScene(new Scene(mainBorderPane, 1300, 900));
         primaryStage.show();
     }
 
