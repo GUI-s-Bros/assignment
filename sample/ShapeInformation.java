@@ -1,4 +1,8 @@
+//Group Members
 //Jonathan Dunsmore
+//Arturo Blandon
+//Howard Montes de Oca
+//
 package assignment.sample;
 
 import javafx.scene.shape.Shape3D;
@@ -11,6 +15,7 @@ public class ShapeInformation {
     char creationID;
     boolean isSelected = false;
     double currentXCoordinate;
+    String color;
 
 
     public ShapeInformation(Shape3D s, double x, double y, char c){

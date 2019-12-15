@@ -1,5 +1,8 @@
-//Names here
+//Group Members
 //Jonathan Dunsmore
+//Arturo Blandon
+//Howard Montes de Oca
+//Pablo Rossi
 package assignment.sample;
 
 import javafx.application.Application;
@@ -20,6 +23,7 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
@@ -32,14 +36,17 @@ import java.util.Vector;
 
 
 public class Main extends Application {
-    int selectedShape;
-    Object isEditing;
+
+    Object isEditing; //pointer to currently selected shape.
     int shapesCreated = 0;
 
     //Fields to store shape info for "Save"
     double xCoordinate;
     double yCoordinate;
     double zCoordinate;
+    double scaleX;
+    double scaleY;
+    double scaleZ;
     double height;
     double width;
     double depth;
@@ -68,157 +75,6 @@ public class Main extends Application {
         MenuItem menuItemSave = new MenuItem("Save");
         MenuItem menuItemOpen = new MenuItem("Open");
         MenuItem menuItemExit = new MenuItem("Exit");
-
-
-        //Save event handler, stores shape information in text file.
-            menuItemSave.setOnAction(event -> {
-
-                        FileChooser fileChooser = new FileChooser();
-                        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-                        File newFile = fileChooser.showSaveDialog(primaryStage);
-                        try {
-                            fw = new FileWriter(newFile);
-                            pw = new PrintWriter(fw);
-                            for (int i = 0; i < vectorOf3DShapes.size(); i++) {
-
-                                xCoordinate = vectorOf3DShapes.get(i).getShape().getTranslateX();
-                                yCoordinate = vectorOf3DShapes.get(i).getShape().getTranslateY();
-                                zCoordinate = vectorOf3DShapes.get(i).getShape().getTranslateZ();
-
-
-                                if (vectorOf3DShapes.get(i).getCreationID() == 'B') {
-                                    height = ((Box) vectorOf3DShapes.get(i).getShape()).getHeight();
-                                    depth = ((Box) vectorOf3DShapes.get(i).getShape()).getDepth();
-                                    width = ((Box) vectorOf3DShapes.get(i).getShape()).getWidth();
-
-                                    pw.println(vectorOf3DShapes.get(i).getShape().getClass().getName());
-                                    pw.println(height);
-                                    pw.println(depth);
-                                    pw.println(width);
-                                    pw.println(xCoordinate);
-                                    pw.println(yCoordinate);
-                                    pw.println(zCoordinate);
-
-
-                                } else if (vectorOf3DShapes.get(i).getCreationID() == 'S') {
-                                    radius = ((Sphere) vectorOf3DShapes.get(i).getShape()).getRadius();
-
-                                    pw.println(vectorOf3DShapes.get(i).getShape().getClass().getName());
-                                    pw.println(xCoordinate);
-                                    pw.println(yCoordinate);
-                                    pw.println(zCoordinate);
-                                    pw.println(radius);
-                                } else if (vectorOf3DShapes.get(i).getCreationID() == 'C') {
-                                    height = ((Cylinder) vectorOf3DShapes.get(i).getShape()).getHeight();
-                                    radius = ((Cylinder) vectorOf3DShapes.get(i).getShape()).getRadius();
-
-                                    pw.println(vectorOf3DShapes.get(i).getShape().getClass().getName());
-                                    pw.println(radius);
-                                    pw.println(height);
-                                    pw.println(xCoordinate);
-                                    pw.println(yCoordinate);
-                                    pw.println(zCoordinate);
-
-                                }
-                            }
-                        } catch(IOException e ){
-                            // Display an alert informing the user the file could not be created
-                            Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setHeaderText("Error Creating File!");
-                            alert.show();
-                        }
-                        catch (NullPointerException n){
-                            Alert alert2 = new Alert(Alert.AlertType.ERROR);
-                            alert2.setHeaderText("Save file canceled");
-                            alert2.show();
-                        }
-
-                try {
-                    fw.close();
-                    pw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                catch (NullPointerException n){
-                    //////////////////
-                }
-
-
-                //pw.close();
-
-
-            });
-
-            // "Open" file menu event handler, scanner reads input line by line then creates shape objects.
-            menuItemOpen.setOnAction(actionEvent -> {
-                //clears out any shapes currently on subscene
-                vectorOf3DShapes.clear();
-                groupShapes.getChildren().clear();
-                shapesCreated = 0;
-
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-                File newFile = fileChooser.showOpenDialog(primaryStage);
-                try {
-                    Scanner scanner = new Scanner(newFile);
-                    String shapeName;
-                    while(scanner.hasNext()) {
-
-                        shapeName = scanner.nextLine();
-
-                        if (shapeName.equals("javafx.scene.shape.Sphere")) {
-                            radius = scanner.nextDouble();
-                            xCoordinate = scanner.nextDouble();
-                            yCoordinate = scanner.nextDouble();
-                            zCoordinate = scanner.nextDouble();
-                            vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), xCoordinate, yCoordinate, 'S'));
-                            groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
-                            vectorOf3DShapes.get(shapesCreated).getShape().setTranslateZ(zCoordinate);
-                            shapesCreated++;
-
-                        } else if (shapeName.equals("javafx.scene.shape.Box")) {
-                            height = scanner.nextDouble();
-                            depth = scanner.nextDouble();
-                            width = scanner.nextDouble();
-                            xCoordinate = scanner.nextDouble();
-                            yCoordinate = scanner.nextDouble();
-                            zCoordinate = scanner.nextDouble();
-                            vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, depth), xCoordinate, yCoordinate, 'B'));
-                            groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
-                            vectorOf3DShapes.get(shapesCreated).getShape().setTranslateZ(zCoordinate);
-                            shapesCreated++;
-                        } else if (shapeName.equals("javafx.scene.shape.Cylinder")) {
-                            radius = scanner.nextDouble();
-                            height = scanner.nextDouble();
-                            xCoordinate = scanner.nextDouble();
-                            yCoordinate = scanner.nextDouble();
-                            zCoordinate = scanner.nextDouble();
-                            vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), xCoordinate, yCoordinate, 'C'));
-                            groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
-                            vectorOf3DShapes.get(shapesCreated).getShape().setTranslateZ(zCoordinate);
-                            shapesCreated++;
-                        }
-
-                        for (int i = 0; i < vectorOf3DShapes.size(); i++) {
-                            vectorOf3DShapes.get(i).getShape().setOnMouseClicked(event1 -> {
-                                isEditing = event1.getTarget();
-                                System.out.println(((Shape3D) isEditing).getClass().getName());
-                            });
-                        }
-
-
-
-                    }
-                    scanner.close();
-
-                }
-                catch (IOException e){
-                    System.out.println("Error opening file");
-                }
-
-            });
-
-
 
 
         menuFile.getItems().addAll(menuItemSave, new SeparatorMenuItem(), menuItemOpen, new SeparatorMenuItem(), menuItemExit);
@@ -296,28 +152,19 @@ public class Main extends Application {
         vboxRightSide.setPadding(new Insets(15));
         mainBorderPane.setRight(vboxRightSide);
 
-        // SubScene stuff
-//        vectorOf3DShapes = new Vector<>(); // vector is basically an array of variable
-        // size that increases as needed
-        // will contain all the pointers to the shapes we make
-//        Group groupShapes = new Group();
 
         SubScene subScene = new SubScene(groupShapes, 700, 500);
         subScene.setFill(Color.AZURE);
         //set the camera angle
         PerspectiveCamera perspectiveCamera = new PerspectiveCamera(true);
         subScene.setCamera(perspectiveCamera);
-        Rotate rotatePerspectiveCameraX = new Rotate(40, Rotate.X_AXIS);
-        Rotate rotatePerspectiveCameraY = new Rotate(40, Rotate.Y_AXIS);
-        perspectiveCamera.getTransforms().addAll(new Translate(0,0,-80));
+        perspectiveCamera.getTransforms().addAll(new Translate(0,0,-90));
         VBox bottomVbox = new VBox(20, subScene, buttonCreateShape);
         bottomVbox.setAlignment(Pos.CENTER);
         bottomVbox.setPadding(new Insets(15));
         mainBorderPane.setCenter(bottomVbox);
 
         // This starts the create shape scene stuff
-        //
-        //
         //
 
         // A borderpane to hold all forms and in the darkness bind them
@@ -389,6 +236,8 @@ public class Main extends Application {
             textFieldCreateShapeLength.setDisable(false);
             textFieldCreateShapeRadius.setDisable(true);
             textFieldCreateShapeWidth.setDisable(false);
+
+
         });
 
         radioButtonCylinder.setOnAction(event -> {
@@ -413,40 +262,71 @@ public class Main extends Application {
         buttonSubmit.setOnAction(event -> {
 
             if(radioButtonBox.isSelected()){
+                try{
                 double width = new Double(textFieldCreateShapeWidth.getText()).doubleValue();
                 double height = new Double(textFieldCreateShapeHeight.getText()).doubleValue();
                 double length = new Double(textFieldCreateShapeLength.getText()).doubleValue();
                 double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
                 double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
-                vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, length), x, y, 'B'));
-                groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+
+                    vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, length), x, y, 'B'));
+                    groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                    vectorOf3DShapes.get(shapesCreated).getShape().getTransforms().addAll(new Rotate(45, Rotate.X_AXIS),
+                            new Rotate(45, Rotate.Y_AXIS)); // default shape rotation
+                }catch (NumberFormatException n){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Make sure every field is filled in. Numbers only.");
+                    alert.show();
+                    return;
+                }
             }
             else if(radioButtonCylinder.isSelected()){
-                double height = new Double(textFieldCreateShapeHeight.getText()).doubleValue();
-                double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
-                double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
-                double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
+                try {
+                    double height = new Double(textFieldCreateShapeHeight.getText()).doubleValue();
+                    double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
+                    double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
+                    double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
-                vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), x, y, 'C'));
-                groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                    vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), x, y, 'C'));
+                    groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                    vectorOf3DShapes.get(shapesCreated).getShape().getTransforms().addAll(new Rotate(45, Rotate.X_AXIS),
+                            new Rotate(45, Rotate.Y_AXIS)); // default shape rotation
+                }catch (NumberFormatException n){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Make sure every field is filled in. Numbers only.");
+                    alert.show();
+                    return;
+                }
             }
             else if(radioButtonSphere.isSelected()){
-                double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
-                double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
-                double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
+                try {
+                    double radius = new Double(textFieldCreateShapeRadius.getText()).doubleValue();
+                    double x = new Double(textFieldCreateShapeXCoordinate.getText()).doubleValue();
+                    double y = new Double(textFieldCreateShapeYCoordinate.getText()).doubleValue();
 
-                vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), x, y, 'S'));
-                groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                    vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), x, y, 'S'));
+                    groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                    vectorOf3DShapes.get(shapesCreated).getShape().getTransforms().addAll(new Rotate(45, Rotate.X_AXIS),
+                            new Rotate(45, Rotate.Y_AXIS)); // default shape rotation
+                }catch (NumberFormatException n){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Make sure every field is filled in. Numbers only.");
+                    alert.show();
+                    return;
+                }
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Select a shape type.");
+                alert.show();
+                return;
             }
 
-            vectorOf3DShapes.get(shapesCreated).getShape().setOnMouseClicked(event1 ->{
-                isEditing = event1.getTarget();
-                System.out.println(((Shape3D)isEditing).getClass().getName());
-//                xCoordinate = vectorOf3DShapes.get(0).getShape().getTranslateX();
-//                System.out.println(xCoordinate);
+                vectorOf3DShapes.get(shapesCreated).getShape().setOnMouseClicked(event1 -> {
+                    isEditing = event1.getTarget();
 
-            } );
+                });
 
             shapesCreated++;
 
@@ -465,7 +345,7 @@ public class Main extends Application {
             stageCreateShape.close();
         });
 
-        //ADDING FUNCTIONALITY
+        //FUNCTIONALITY FOR ROTATION
         sliderRotateX.valueProperty().addListener((s,o,n)->{
             try {
                 ((Shape3D) isEditing).getTransforms().addAll(new Rotate(sliderRotateX.getValue(), Rotate.X_AXIS));
@@ -502,9 +382,20 @@ public class Main extends Application {
             }
         });
 
+        //FUNCTIONALITY FOR TRANSLATION
         buttonTranslateToXCoordinate.setOnAction(event2 ->{
             try {
-                ((Shape3D) isEditing).setTranslateX(Double.parseDouble(textFieldTranslateToXCoordinate.getText()));
+                if(Double.parseDouble(textFieldTranslateToXCoordinate.getText())>=25)
+                {
+                    ((Shape3D) isEditing).setTranslateX(25);
+                }
+                else if(Double.parseDouble(textFieldTranslateToXCoordinate.getText())<=-25)
+                {
+                    ((Shape3D) isEditing).setTranslateX(-25);
+                }
+                else {
+                    ((Shape3D) isEditing).setTranslateX(Double.parseDouble(textFieldTranslateToXCoordinate.getText()));
+                }
             }
             catch (NullPointerException n){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -516,7 +407,17 @@ public class Main extends Application {
 
         buttonTranslateToYCoordinate.setOnAction(event3->{
             try {
-                ((Shape3D) isEditing).setTranslateY(Double.parseDouble(textFieldTranslateToYCoordinate.getText()));
+                if(Double.parseDouble(textFieldTranslateToYCoordinate.getText())>=17)
+                {
+                    ((Shape3D) isEditing).setTranslateY(17);
+                }
+                else if(Double.parseDouble(textFieldTranslateToYCoordinate.getText())<=-17)
+                {
+                    ((Shape3D) isEditing).setTranslateY(-17);
+                }
+                else {
+                    ((Shape3D) isEditing).setTranslateY(Double.parseDouble(textFieldTranslateToYCoordinate.getText()));
+                }
             }
             catch (NullPointerException n){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -528,7 +429,17 @@ public class Main extends Application {
 
         buttonTranslateToZCoordinate.setOnAction(event4->{
             try {
-                ((Shape3D) isEditing).setTranslateZ(Double.parseDouble(textFieldTranslateToZCoordinate.getText()));
+                if(Double.parseDouble(textFieldTranslateToZCoordinate.getText())>=25)
+                {
+                    ((Shape3D) isEditing).setTranslateZ(25);
+                }
+                else if(Double.parseDouble(textFieldTranslateToZCoordinate.getText())<=-50)
+                {
+                    ((Shape3D) isEditing).setTranslateZ(-50);
+                }
+                else {
+                    ((Shape3D) isEditing).setTranslateZ(Double.parseDouble(textFieldTranslateToZCoordinate.getText()));
+                }
             }
             catch (NullPointerException n){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -584,10 +495,10 @@ public class Main extends Application {
                 if (choiceBoxShapeColors.getValue().equals("Red"))
                     ((Shape3D) isEditing).setMaterial(new PhongMaterial(Color.RED));
             }catch(NullPointerException n){
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setHeaderText("No shape selected");
-                    alert.show();
-                    choiceBoxShapeColors.setValue(null);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("No shape selected");
+                alert.show();
+                choiceBoxShapeColors.setValue(null);
             }
         });
 
@@ -620,6 +531,204 @@ public class Main extends Application {
                 subScene.setFill(Color.TEAL);
             }
         });
+
+
+        //event handler for save menu, stores shape type and information in text file
+        menuItemSave.setOnAction(event -> {
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            File newFile = fileChooser.showSaveDialog(primaryStage);
+            try {
+                fw = new FileWriter(newFile);
+                pw = new PrintWriter(fw);
+                for (int i = 0; i < vectorOf3DShapes.size(); i++) {
+
+                    xCoordinate = vectorOf3DShapes.get(i).getShape().getTranslateX();
+                    yCoordinate = vectorOf3DShapes.get(i).getShape().getTranslateY();
+                    zCoordinate = vectorOf3DShapes.get(i).getShape().getTranslateZ();
+                    scaleX = vectorOf3DShapes.get(i).getShape().getScaleX();
+                    scaleY = vectorOf3DShapes.get(i).getShape().getScaleY();
+                    scaleZ = vectorOf3DShapes.get(i).getShape().getScaleZ();
+
+
+                    if (vectorOf3DShapes.get(i).getCreationID() == 'B') {
+                        height = ((Box) vectorOf3DShapes.get(i).getShape()).getHeight();
+                        depth = ((Box) vectorOf3DShapes.get(i).getShape()).getDepth();
+                        width = ((Box) vectorOf3DShapes.get(i).getShape()).getWidth();
+
+                        pw.println(vectorOf3DShapes.get(i).getShape().getClass().getName());
+                        pw.println(height);
+                        pw.println(depth);
+                        pw.println(width);
+                        pw.println(xCoordinate);
+                        pw.println(yCoordinate);
+                        pw.println(zCoordinate);
+                        pw.println(scaleX);
+                        pw.println(scaleY);
+                        pw.println(scaleZ);
+
+
+                    } else if (vectorOf3DShapes.get(i).getCreationID() == 'S') {
+                        radius = ((Sphere) vectorOf3DShapes.get(i).getShape()).getRadius();
+
+                        pw.println(vectorOf3DShapes.get(i).getShape().getClass().getName());
+                        pw.println(radius);
+                        pw.println(xCoordinate);
+                        pw.println(yCoordinate);
+                        pw.println(zCoordinate);
+                        pw.println(scaleX);
+                        pw.println(scaleY);
+                        pw.println(scaleZ);
+
+                    } else if (vectorOf3DShapes.get(i).getCreationID() == 'C') {
+                        height = ((Cylinder) vectorOf3DShapes.get(i).getShape()).getHeight();
+                        radius = ((Cylinder) vectorOf3DShapes.get(i).getShape()).getRadius();
+
+                        pw.println(vectorOf3DShapes.get(i).getShape().getClass().getName());
+                        pw.println(radius);
+                        pw.println(height);
+                        pw.println(xCoordinate);
+                        pw.println(yCoordinate);
+                        pw.println(zCoordinate);
+                        pw.println(scaleX);
+                        pw.println(scaleY);
+                        pw.println(scaleZ);
+
+                    }
+                }
+            } catch(IOException e ){
+                // Display an alert informing the user the file could not be created
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Error Creating File!");
+                alert.show();
+            }
+            catch (NullPointerException n){
+                Alert alert2 = new Alert(Alert.AlertType.ERROR);
+                alert2.setHeaderText("Save file canceled");
+                alert2.show();
+            }
+
+            try {
+                fw.close();
+                pw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (NullPointerException n){
+                //////////////////
+            }
+
+
+
+        });
+
+        // "Open" file menu event handler, scanner reads input line by line then creates shape objects.
+        menuItemOpen.setOnAction(actionEvent -> {
+            //clears out any shapes currently on subscene
+            vectorOf3DShapes.clear();
+            groupShapes.getChildren().clear();
+            shapesCreated = 0;
+
+            //resets controls
+            textFieldTranslateToXCoordinate.setText("");
+            textFieldTranslateToYCoordinate.setText("");
+            textFieldTranslateToZCoordinate.setText("");
+            scaleXCoordinate.setValue(1);
+            scaleYCoordinate.setValue(1);
+            scaleZCoordinate.setValue(1);
+
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            try {
+                File newFile = fileChooser.showOpenDialog(primaryStage);
+                Scanner scanner = new Scanner(newFile);
+                String shapeName;
+                while(scanner.hasNext()) {
+
+                    shapeName = scanner.nextLine();
+
+                    if (shapeName.equals("javafx.scene.shape.Sphere")) {
+                        radius = scanner.nextDouble();
+                        xCoordinate = scanner.nextDouble();
+                        yCoordinate = scanner.nextDouble();
+                        zCoordinate = scanner.nextDouble();
+                        scaleX = scanner.nextDouble();
+                        scaleY = scanner.nextDouble();
+                        scaleZ = scanner.nextDouble();
+
+                        vectorOf3DShapes.add(new ShapeInformation(new Sphere(radius), xCoordinate, yCoordinate, 'S'));
+                        groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                        vectorOf3DShapes.get(shapesCreated).getShape().setTranslateZ(zCoordinate);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleX(scaleX);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleY(scaleY);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleZ(scaleZ);
+                        shapesCreated++;
+
+                    } else if (shapeName.equals("javafx.scene.shape.Box")) {
+                        height = scanner.nextDouble();
+                        depth = scanner.nextDouble();
+                        width = scanner.nextDouble();
+                        xCoordinate = scanner.nextDouble();
+                        yCoordinate = scanner.nextDouble();
+                        zCoordinate = scanner.nextDouble();
+                        scaleX = scanner.nextDouble();
+                        scaleY = scanner.nextDouble();
+                        scaleZ = scanner.nextDouble();
+
+                        vectorOf3DShapes.add(new ShapeInformation(new Box(width, height, depth), xCoordinate, yCoordinate, 'B'));
+                        groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                        vectorOf3DShapes.get(shapesCreated).getShape().setTranslateZ(zCoordinate);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleX(scaleX);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleY(scaleY);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleZ(scaleZ);
+                        shapesCreated++;
+                    } else if (shapeName.equals("javafx.scene.shape.Cylinder")) {
+                        radius = scanner.nextDouble();
+                        height = scanner.nextDouble();
+                        xCoordinate = scanner.nextDouble();
+                        yCoordinate = scanner.nextDouble();
+                        zCoordinate = scanner.nextDouble();
+                        scaleX = scanner.nextDouble();
+                        scaleY = scanner.nextDouble();
+                        scaleZ = scanner.nextDouble();
+
+                        vectorOf3DShapes.add(new ShapeInformation(new Cylinder(radius, height), xCoordinate, yCoordinate, 'C'));
+                        groupShapes.getChildren().add(vectorOf3DShapes.get(shapesCreated).getShape());
+                        vectorOf3DShapes.get(shapesCreated).getShape().setTranslateZ(zCoordinate);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleX(scaleX);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleY(scaleY);
+                        vectorOf3DShapes.get(shapesCreated).getShape().setScaleZ(scaleZ);
+                        shapesCreated++;
+                    }
+
+                    for (int i = 0; i < vectorOf3DShapes.size(); i++) {
+                        vectorOf3DShapes.get(i).getShape().setOnMouseClicked(event1 -> {
+                            isEditing = event1.getTarget();
+                        });
+                    }
+
+
+
+                }
+                scanner.close();
+
+            }
+            catch (IOException e){
+                System.out.println("Error opening file");
+            }
+            catch (NullPointerException np){
+                // In case user cancels "open" file selection
+            }
+
+        });
+
+
+
+
+
+
 
         menuItemExit.setOnAction(event -> {
             primaryStage.close();
