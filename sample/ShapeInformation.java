@@ -1,5 +1,9 @@
+//Group Members
 //Jonathan Dunsmore
-package sample;
+//Arturo Blandon
+//Howard Montes de Oca
+//
+package assignment.sample;
 
 import javafx.scene.shape.Shape3D;
 import javafx.stage.Stage;
@@ -8,15 +12,20 @@ import javafx.stage.Stage;
 public class ShapeInformation {
     Shape3D shape;
     double startingXCoordinate, startingYCoordinate;
-    int creationID;
+    char creationID;
     boolean isSelected = false;
+    double currentXCoordinate;
+    String color;
 
-    public ShapeInformation(Shape3D s, double x, double y, int c){
+
+    public ShapeInformation(Shape3D s, double x, double y, char c){
         shape = s;
         startingXCoordinate = x;
         startingYCoordinate = y;
         creationID = c;
 
+
+        currentXCoordinate = x;
         s.setTranslateX(x);
         s.setTranslateY(y);
 
@@ -37,7 +46,7 @@ public class ShapeInformation {
     public double getStartingYCoordinate(){
         return startingYCoordinate;
     }
-    public int getCreationID(){ // this was intended to be what we tied to the object for when we select it with the mouse
+    public char getCreationID(){ // this was intended to be what we tied to the object for when we select it with the mouse
         return creationID;
     }
 
@@ -54,4 +63,5 @@ public class ShapeInformation {
     public void resetSelected(){
         isSelected = false;
     }
+
 }
